@@ -82,6 +82,11 @@ export class SeekerService {
         );
 
         profile.resumeUrl = upload.url;
-        return this.seekerRepo.save(profile);
+        await this.seekerRepo.save(profile);
+
+        return {
+            resumeUrl: upload.url,
+        };
     }
+
 }

@@ -1,5 +1,7 @@
+import { VerifyAccountForm } from "@/components/forms/verify-account.form";
+
 const VerifyAccount = () => {
-  return <div>VerifyAccount</div>;
+  return <VerifyAccountForm />;
 };
 
 export default VerifyAccount;
