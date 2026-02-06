@@ -1,9 +1,9 @@
 const Logo = () => {
   return (
     <div className="mb-12 flex flex-col items-center">
-      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-emerald-600 to-emerald-700 mb-4 shadow-lg">
+      <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-primary to-primary/80 mb-4 shadow-lg">
         <svg
-          className="w-8 h-8 text-white"
+          className="w-8 h-8 text-primary-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -16,8 +16,8 @@ const Logo = () => {
           />
         </svg>
       </div>
-      <h1 className="text-3xl font-bold text-emerald-800">JobGeek</h1>
-      <p className="text-gray-600 mt-2">Build careers. Hire smarter.</p>
+      <h1 className="text-3xl font-bold text-primary">JobGeek</h1>
+      <p className="text-muted-foreground mt-2">Build careers. Hire smarter.</p>
     </div>
   );
 };

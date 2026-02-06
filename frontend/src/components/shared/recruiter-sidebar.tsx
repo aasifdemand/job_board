@@ -18,9 +18,7 @@ import {
   Users,
   Building,
   FileText,
-  MessageSquare,
   TrendingUp,
-  Calendar,
   Settings,
   HelpCircle,
   DollarSign,
@@ -51,22 +49,12 @@ const RecruiterSidebar = () => {
       badge: 3,
     },
     { icon: Building, label: "Company", href: "/recruiter/company" },
-  ];
-
-  const managementNavItems = [
     {
       icon: FileText,
       label: "Applications",
       href: "/recruiter/applications",
       badge: 24,
     },
-    {
-      icon: MessageSquare,
-      label: "Messages",
-      href: "/recruiter/messages",
-      badge: 7,
-    },
-    { icon: Calendar, label: "Schedule", href: "/recruiter/schedule" },
   ];
 
   const analyticsNavItems = [
@@ -127,38 +115,6 @@ const RecruiterSidebar = () => {
                               ? "bg-background text-foreground"
                               : "bg-primary/10 text-primary",
                           )}
-                        >
-                          {item.badge}
-                        </Badge>
-                      )}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Management Navigation */}
-        <SidebarGroup className="px-4 mt-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Management
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {managementNavItems.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    asChild
-                    className="group w-full justify-start px-3 py-2.5 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
-                    <a href={item.href}>
-                      <item.icon className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <Badge
-                          variant="outline"
-                          className="ml-auto text-xs bg-primary/10 text-primary border-primary/20"
                         >
                           {item.badge}
                         </Badge>

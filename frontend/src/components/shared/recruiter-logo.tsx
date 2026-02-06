@@ -6,7 +6,7 @@ const RecruiterLogo = () => {
     <div className="flex items-center space-x-3">
       {/* Logo Icon */}
       <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-primary to-primary/90 shadow-lg">
-        <Building2 className="w-6 h-6 text-white" />
+        <Building2 className="w-6 h-6 text-primary-foreground" />
       </div>
 
       {/* Logo Text and Badge */}

@@ -23,7 +23,6 @@ import {
   Calendar,
   Settings,
   HelpCircle,
-  Star,
 } from "lucide-react";
 import { Badge } from "../ui/badge";
 
@@ -52,7 +51,6 @@ const SeekerSidebar = () => {
       href: "/seeker/interviews",
       badge: 2,
     },
-    { icon: Star, label: "Recommended", href: "/seeker/recommended" },
   ];
 
   const bottomNavItems = [

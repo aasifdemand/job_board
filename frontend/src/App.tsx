@@ -10,11 +10,19 @@ import SeekerLayout from "./layouts/seeker.layout";
 import SeekerDashboard from "./pages/seeker/dashboard";
 import RecruiterLayout from "./layouts/recruiter.layout";
 import RecruiterDashboard from "./pages/recruiter/dashboard";
-import Jobs from "./pages/seeker/jobs";
-import Applications from "./pages/seeker/applications";
+import SeekerJobs from "./pages/seeker/jobs";
+import SeekerApplications from "./pages/seeker/applications";
 import Resume from "./pages/seeker/resume";
 import SavedJobs from "./pages/seeker/jobs/saved-jobs";
-
+import Analytics from "./pages/seeker/analytics";
+import SeeekerInterviews from "./pages/seeker/interviews";
+import Settings from "./pages/seeker/settings";
+import RecruiterJobs from "./pages/recruiter/jobs/index";
+import Candidates from "./pages/recruiter/candidates";
+import RecruiterInterviews from "./pages/seeker/interviews";
+import Company from "./pages/recruiter/profile";
+import RecruiterApplications from "./pages/recruiter/applications";
+import RecruiterAnalytics from "./pages/recruiter/analytics";
 const App = () => {
   return (
     <Routes>
@@ -29,13 +37,22 @@ const App = () => {
 
       <Route path="seeker" element={<SeekerLayout />}>
         <Route index element={<SeekerDashboard />} />
-        <Route path="jobs" element={<Jobs />} />
-        <Route path="applications" element={<Applications />} />
+        <Route path="jobs" element={<SeekerJobs />} />
+        <Route path="applications" element={<SeekerApplications />} />
         <Route path="resume" element={<Resume />} />
         <Route path="saved" element={<SavedJobs />} />
+        <Route path="analytics" element={<Analytics />} />
+        <Route path="interviews" element={<SeeekerInterviews />} />
+        <Route path="Settings" element={<Settings />} />
       </Route>
       <Route path="recruiter" element={<RecruiterLayout />}>
         <Route index element={<RecruiterDashboard />} />
+        <Route path="jobs" element={<RecruiterJobs />} />
+        <Route path="candidates" element={<Candidates />} />
+        <Route path="interviews" element={<RecruiterInterviews />} />
+        <Route path="company" element={<Company />} />
+        <Route path="applications" element={<RecruiterApplications />} />
+        <Route path="analytics" element={<RecruiterAnalytics />} />
       </Route>
     </Routes>
   );

@@ -58,9 +58,7 @@ const RecruiterLayout = () => {
 
           {/* Page Content */}
           <main className="flex-1 w-full p-6 overflow-y-auto">
-            <div className="max-w-7xl mx-auto">
-              <Outlet />
-            </div>
+            <Outlet />
           </main>
 
           {/* Footer */}

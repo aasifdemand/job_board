@@ -47,71 +47,100 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.985 0 0); /* Very light background */
-  --foreground: oklch(0.15 0.02 150); /* Dark green text */
-  --card: oklch(1 0 0); /* Pure white cards */
-  --card-foreground: oklch(0.15 0.02 150);
+  --background: oklch(0.98 0.005 140); /* Very light mint background */
+  --foreground: oklch(0.15 0.04 140); /* Rich forest green text */
+  
+  --card: oklch(1 0 0); /* Pure white */
+  --card-foreground: oklch(0.15 0.04 140);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 150);
-  --primary: oklch(0.55 0.15 150); /* Professional green */
-  --primary-foreground: oklch(0.985 0 0); /* White on green */
-  --secondary: oklch(0.97 0.01 150); /* Light green tint */
-  --secondary-foreground: oklch(0.15 0.02 150);
-  --muted: oklch(0.96 0.005 150);
-  --muted-foreground: oklch(0.55 0.05 150); /* Medium green-gray */
-  --accent: oklch(0.95 0.02 200); /* Teal accent */
-  --accent-foreground: oklch(0.15 0.02 150);
-  --destructive: oklch(0.65 0.22 25); /* Red for warnings */
-  --border: oklch(0.9 0.01 150); /* Light green border */
-  --input: oklch(0.96 0.005 150);
-  --ring: oklch(0.55 0.15 150); /* Primary green ring */
-  --chart-1: oklch(0.55 0.15 150); /* Primary green */
-  --chart-2: oklch(0.65 0.15 200); /* Teal */
-  --chart-3: oklch(0.7 0.12 120); /* Bright green */
-  --chart-4: oklch(0.6 0.18 40); /* Orange */
-  --chart-5: oklch(0.55 0.1 300); /* Purple */
-  --sidebar: oklch(0.98 0.005 150); /* Slightly tinted sidebar */
-  --sidebar-foreground: oklch(0.15 0.02 150);
-  --sidebar-primary: oklch(0.55 0.15 150);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.95 0.02 150);
-  --sidebar-accent-foreground: oklch(0.15 0.02 150);
-  --sidebar-border: oklch(0.9 0.01 150);
-  --sidebar-ring: oklch(0.55 0.15 150);
+  --popover-foreground: oklch(0.15 0.04 140);
+  
+  /* Primary - Beautiful emerald green */
+  --primary: oklch(0.65 0.18 145); /* Vibrant emerald */
+  --primary-foreground: oklch(1 0 0); /* White */
+  
+  /* Secondary - Soft mint green */
+  --secondary: oklch(0.96 0.03 150);
+  --secondary-foreground: oklch(0.2 0.06 140);
+  
+  --muted: oklch(0.94 0.02 150);
+  --muted-foreground: oklch(0.55 0.06 140);
+  
+  /* Accent - Teal accent */
+  --accent: oklch(0.92 0.04 160);
+  --accent-foreground: oklch(0.2 0.06 140);
+  
+  --destructive: oklch(0.7 0.24 25);
+  --border: oklch(0.85 0.03 150); /* Light green border */
+  --input: oklch(0.94 0.02 150);
+  --ring: oklch(0.65 0.18 145);
+  
+  /* Chart colors - Vibrant green spectrum */
+  --chart-1: oklch(0.65 0.18 145); /* Emerald - Primary color */
+  --chart-2: oklch(0.6 0.2 160); /* Teal - Accent color */
+  --chart-3: oklch(0.7 0.22 130); /* Lime green */
+  --chart-4: oklch(0.55 0.24 110); /* Chartreuse */
+  --chart-5: oklch(0.75 0.16 170); /* Aqua green */
+  
+  /* Sidebar - Very light mint tint */
+  --sidebar: oklch(0.97 0.02 150);
+  --sidebar-foreground: oklch(0.15 0.04 140);
+  --sidebar-primary: oklch(0.65 0.18 145);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.92 0.04 160);
+  --sidebar-accent-foreground: oklch(0.2 0.06 140);
+  --sidebar-border: oklch(0.85 0.03 150);
+  --sidebar-ring: oklch(0.65 0.18 145);
 }
 
 .dark {
-  --background: oklch(0.12 0.01 140); /* Dark green background - forest/nature feel */
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.18 0.02 140); /* Dark green card */
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.18 0.02 140);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.7 0.15 140); /* Bright green - growth/success */
-  --primary-foreground: oklch(0.12 0.01 140);
-  --secondary: oklch(0.25 0.02 140);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.22 0.02 140);
-  --muted-foreground: oklch(0.7 0.05 140);
-  --accent: oklch(0.25 0.04 180); /* Cyan accent */
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.75 0.22 25);
-  --border: oklch(0.7 0.05 140 / 0.2); /* Subtle green borders */
-  --input: oklch(1 0 0 / 0.15);
-  --ring: oklch(0.7 0.15 140);
-  --chart-1: oklch(0.7 0.15 140); /* Primary green */
-  --chart-2: oklch(0.75 0.15 180); /* Teal */
-  --chart-3: oklch(0.8 0.12 100); /* Lime green */
-  --chart-4: oklch(0.7 0.18 60); /* Gold/yellow */
-  --chart-5: oklch(0.65 0.1 280); /* Light purple */
-  --sidebar: oklch(0.15 0.02 140);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.7 0.15 140);
-  --sidebar-primary-foreground: oklch(0.12 0.01 140);
-  --sidebar-accent: oklch(0.22 0.02 140);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(0.7 0.05 140 / 0.2);
-  --sidebar-ring: oklch(0.7 0.15 140);
+  /* Base - Deep forest green */
+  --background: oklch(0.14 0.03 140);
+  --foreground: oklch(0.95 0.02 150);
+  
+  /* Cards - Dark emerald */
+  --card: oklch(0.18 0.04 140);
+  --card-foreground: oklch(0.95 0.02 150);
+  --popover: oklch(0.2 0.05 140);
+  --popover-foreground: oklch(0.95 0.02 150);
+  
+  /* Primary - Bright vibrant green that pops */
+  --primary: oklch(0.75 0.2 140); /* Bright emerald */
+  --primary-foreground: oklch(1 0 0); /* White */
+  
+  /* Secondary - Moss green */
+  --secondary: oklch(0.25 0.06 140);
+  --secondary-foreground: oklch(0.95 0.02 150);
+  
+  /* Muted - Sage green */
+  --muted: oklch(0.2 0.04 140);
+  --muted-foreground: oklch(0.75 0.05 150);
+  
+  /* Accent - Bright teal */
+  --accent: oklch(0.3 0.08 160);
+  --accent-foreground: oklch(0.95 0.02 150);
+  
+  --destructive: oklch(0.75 0.24 25);
+  --border: oklch(0.35 0.06 140); /* Visible green borders */
+  --input: oklch(0.22 0.05 140);
+  --ring: oklch(0.75 0.2 140);
+  
+  /* Chart colors - Bright green spectrum for dark mode */
+  --chart-1: oklch(0.75 0.2 140); /* Bright emerald - matches primary */
+  --chart-2: oklch(0.7 0.22 160); /* Vibrant teal */
+  --chart-3: oklch(0.8 0.24 130); /* Glowing lime */
+  --chart-4: oklch(0.65 0.26 110); /* Bright chartreuse */
+  --chart-5: oklch(0.85 0.18 170); /* Light aqua */
+  
+  /* Sidebar - Darker forest green */
+  --sidebar: oklch(0.16 0.03 140);
+  --sidebar-foreground: oklch(0.95 0.02 150);
+  --sidebar-primary: oklch(0.75 0.2 140);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.22 0.07 140);
+  --sidebar-accent-foreground: oklch(0.95 0.02 150);
+  --sidebar-border: oklch(0.35 0.06 140);
+  --sidebar-ring: oklch(0.75 0.2 140);
 }
 @layer base {
   * {
