@@ -1,7 +1,9 @@
 import {
     BadRequestException,
+    ForbiddenException,
     Injectable,
     Logger,
+    NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +16,9 @@ import { User, UserRole } from 'src/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { MailService } from 'src/services/mail.service';
+import { JwtUser } from 'src/types/user.type';
+import { JobSeekerProfile } from 'src/entities/seeker.entity';
+import { Company } from 'src/entities/company.entity';
 
 @Injectable()
 export class AuthService {
@@ -38,30 +43,45 @@ export class AuthService {
             throw new BadRequestException('Email already in use');
         }
 
+        // 1️⃣ Generate verification token (for link)
         const verificationToken = crypto.randomUUID();
-        this.logger.debug(`Generated verification token for ${dto.email}`);
+
+        // 2️⃣ Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         const user = this.userRepo.create({
             ...dto,
             password: await bcrypt.hash(dto.password, 10),
             verificationToken,
+            emailVerificationOtp: otp,
+            emailVerificationOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
             isEmailVerified: false,
         });
 
         await this.userRepo.save(user);
+
         this.logger.log(`User created with ID: ${user.id}`);
 
         try {
-            await this.mailService.sendVerificationEmail(user.email, verificationToken);
+            await this.mailService.sendVerificationEmail(
+                user.email,
+                verificationToken,
+                otp
+            );
+
             this.logger.log(`Verification email sent to ${user.email}`);
         } catch (error) {
-            this.logger.error(`Failed to send verification email to ${user.email}`, error.stack);
-            // Don't throw here - user is already created, they can request a new email
+            this.logger.error(
+                `Failed to send verification email to ${user.email}`,
+                error.stack,
+            );
         }
 
-        this.logger.log(`Registration successful for user ID: ${user.id}`);
-        return { message: 'Verify your email to continue' };
+        return {
+            message: 'Verification link and OTP sent to your email',
+        };
     }
+
 
     // ---------- LOGIN ----------
     async login(dto: LoginDto) {
@@ -116,6 +136,7 @@ export class AuthService {
                 name: googleUser.name,
                 role: UserRole.JOB_SEEKER,
                 isEmailVerified: true,
+                isOnboarded: false,
             });
 
             await this.userRepo.save(user);
@@ -192,46 +213,89 @@ export class AuthService {
     }
 
     // ---------- VERIFY EMAIL ----------
-    async verifyAccount(token: string) {
-        this.logger.log(`Email verification attempt with token: ${token.substring(0, 8)}...`);
-
+    async verifyAccount(email: string, otp: string) {
         const user = await this.userRepo.findOne({
-            where: { verificationToken: token },
+            where: { email },
         });
 
         if (!user) {
-            this.logger.warn(`Email verification failed: Invalid token ${token.substring(0, 8)}...`);
-            throw new BadRequestException('Invalid token');
+            throw new BadRequestException('User not found');
+        }
+
+        if (user.isEmailVerified) {
+            return { message: 'Account already verified' };
+        }
+
+        if (!user.emailVerificationOtp || user.emailVerificationOtp !== otp) {
+            throw new BadRequestException('Invalid OTP');
+        }
+
+        if (
+            !user.emailVerificationOtpExpiresAt ||
+            user.emailVerificationOtpExpiresAt < new Date()
+        ) {
+            throw new BadRequestException('OTP expired');
         }
 
         user.isEmailVerified = true;
-        user.verificationToken = undefined;
+        user.emailVerificationOtp = undefined;
+        user.emailVerificationOtpExpiresAt = undefined;
 
         await this.userRepo.save(user);
-        this.logger.log(`Email verified successfully for user ID: ${user.id}`);
 
-        return { message: 'Account verified' };
+        return { message: 'Account verified successfully' };
     }
+
+
 
     // ---------- JWT ----------
     private signToken(user: User) {
-        this.logger.debug(`Generating JWT token for user ID: ${user.id}`);
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.name,
+            isOnboarded: user.isOnboarded, // ✅ ADD THIS
+        };
 
-        const tokenData = {
-            accessToken: this.jwtService.sign({
-                sub: user.id,
-                email: user.email,
-                role: user.role,
-            }),
+        return {
+            accessToken: this.jwtService.sign(payload),
             user: {
                 id: user.id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
+                isOnboarded: user.isOnboarded, // ✅ ADD THIS
             },
         };
-
-        this.logger.debug(`JWT token generated for user ID: ${user.id}`);
-        return tokenData;
     }
+
+
+
+    async selectRole(role: UserRole, authUser: JwtUser) {
+        const user = await this.userRepo.findOne({
+            where: { id: authUser.userId },
+        });
+
+        if (!user) throw new NotFoundException('User not found');
+
+        if (user.role) {
+            throw new ForbiddenException('Role already selected');
+        }
+
+        user.role = role;
+        await this.userRepo.save(user);
+
+        return { message: 'Role selected successfully' };
+    }
+
+
+    async findOne(id: string) {
+        return this.userRepo.findOne({
+            where: { id },
+            relations: [JobSeekerProfile.name, Company.name]
+        });
+    }
+
+
 }

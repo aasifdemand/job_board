@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -26,10 +25,22 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
 
 const RecruiterSidebar = () => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
+  };
+
   const mainNavItems = [
-    { icon: Home, label: "Dashboard", href: "/recruiter", active: true },
+    { icon: Home, label: "Dashboard", href: "/recruiter" },
     {
       icon: Briefcase,
       label: "Job Postings",
@@ -68,119 +79,130 @@ const RecruiterSidebar = () => {
     { icon: HelpCircle, label: "Help", href: "/recruiter/help" },
   ];
 
+  const isActive = (href: string) => {
+    if (href === "/recruiter") {
+      return currentPath === href;
+    }
+    return currentPath.startsWith(href);
+  };
+
   return (
-    <Sidebar className="w-64 shrink-0 border-r bg-card">
-      <SidebarContent className="h-full flex flex-col">
+    <Sidebar className="border-r">
+      <SidebarContent>
         {/* Logo */}
-        <div className="p-4 pb-4">
+        <div className="p-6">
           <RecruiterLogo />
         </div>
 
-        <Separator className="mb-4" />
-
         {/* Main Navigation */}
-        <SidebarGroup className="px-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Workspace
-          </SidebarGroupLabel>
+        <SidebarGroup>
+          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {mainNavItems.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      "group relative w-full justify-start px-3 py-2.5 rounded-lg transition-all duration-200",
-                      item.active
-                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                        : "hover:bg-accent hover:text-accent-foreground",
-                    )}
-                  >
-                    <a href={item.href}>
-                      <item.icon
-                        className={cn(
-                          "mr-3 h-4 w-4",
-                          item.active
-                            ? "text-primary-foreground"
-                            : "text-muted-foreground group-hover:text-accent-foreground",
-                        )}
-                      />
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <Badge
-                          variant={item.active ? "secondary" : "outline"}
-                          className={cn(
-                            "ml-auto text-xs",
-                            item.active
-                              ? "bg-background text-foreground"
-                              : "bg-primary/10 text-primary",
-                          )}
-                        >
-                          {item.badge}
-                        </Badge>
+            <SidebarMenu>
+              {mainNavItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
                       )}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                    >
+                      <a href={item.href} className="flex items-center gap-3">
+                        <item.icon
+                          className={cn("h-5 w-5", active && "text-primary")}
+                        />
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
+                        {item.badge && (
+                          <Badge variant="secondary" className="ml-auto">
+                            {item.badge}
+                          </Badge>
+                        )}
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Analytics Navigation */}
-        <SidebarGroup className="px-4 mt-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Analytics
-          </SidebarGroupLabel>
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel>Analytics</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {analyticsNavItems.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    asChild
-                    className="group w-full justify-start px-3 py-2.5 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
-                    <a href={item.href}>
-                      <item.icon className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
-                      <span>{item.label}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu>
+              {analyticsNavItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
+                      )}
+                    >
+                      <a href={item.href} className="flex items-center gap-3">
+                        <item.icon
+                          className={cn("h-5 w-5", active && "text-primary")}
+                        />
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Bottom Navigation */}
-        <div className="mt-auto p-4 border-t">
-          <SidebarMenu className="space-y-1">
-            {bottomNavItems.map((item) => (
-              <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton
-                  asChild
-                  className="group w-full justify-start px-3 py-2.5 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-                >
-                  <a href={item.href}>
-                    <item.icon className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-accent-foreground" />
-                    <span>{item.label}</span>
-                  </a>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {bottomNavItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
+                      )}
+                    >
+                      <a href={item.href} className="flex items-center gap-3">
+                        <item.icon
+                          className={cn("h-5 w-5", active && "text-primary")}
+                        />
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout}>
+                  <LogOut className="h-5 w-5" />
+                  <span>Logout</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            ))}
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                className="group w-full justify-start px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
-              >
-                <a href="/logout">
-                  <LogOut className="mr-3 h-4 w-4" />
-                  <span>Logout</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </div>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );

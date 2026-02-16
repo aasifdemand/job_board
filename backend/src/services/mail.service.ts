@@ -49,12 +49,22 @@ export class MailService {
         }
     }
 
-    async sendVerificationEmail(email: string, token: string) {
-        const link = `${process.env.FRONTEND_URL}/verify?token=${token}`;
+    async sendVerificationEmail(email: string, token: string, otp: string) {
+
+        const html = `
+        <h2>Verify Your Email Address</h2>
+        <p>Thank you for registering! Please verify your email address:</p>
+        <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px;">${otp}</p>
+        <p>Enter this code in the verification form.</p>
+        
+        <p style="color: #666; margin-top: 32px;">This verification link and OTP will expire in 10 minutes.</p>
+        <p style="color: #666;">If you didn't create an account, you can safely ignore this email.</p>
+    `;
+
         return this.sendMail(
             email,
-            'Verify your account',
-            `<p>Click to verify:</p><a href="${link}">${link}</a>`,
+            'Verify Your Email Address - Job Board', // Proper subject line
+            html
         );
     }
 

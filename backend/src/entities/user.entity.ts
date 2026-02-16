@@ -34,14 +34,13 @@ export class User {
     @Column({ type: 'varchar', length: 255, nullable: true })
     password: string;
 
-
-
     @Column({
         type: 'enum',
         enum: UserRole,
-        default: UserRole.JOB_SEEKER,
+        nullable: true,
     })
-    role: UserRole;
+    role: UserRole | null;
+
 
     @Column({ default: false })
     isEmailVerified: boolean;
@@ -54,6 +53,18 @@ export class User {
 
     @Column({ nullable: true })
     verificationToken?: string;
+
+    @Column({ nullable: true })
+    emailVerificationOtp?: string;
+
+    @Column({ type: "timestamp", nullable: true })
+    emailVerificationOtpExpiresAt?: Date;
+
+    @Column({ default: false })
+    isOnboarded: boolean;
+
+
+
 
     @Column({ nullable: true, unique: true })
     googleId?: string;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -5,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSeekerStore } from "@/store/seeker.store";
 
 interface JobSeekerSkillsStepProps {
   formData: {
@@ -22,7 +23,6 @@ const JobSeekerSkillsStep = ({
   toggleSkill,
   updateFormData,
 }: JobSeekerSkillsStepProps) => {
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -44,6 +44,8 @@ const JobSeekerSkillsStep = ({
     "Machine Learning",
   ];
 
+  const uploadResume = useSeekerStore((s) => s.uploadResume);
+
   const handleFileUpload = async (file: File) => {
     if (file.type !== "application/pdf") {
       setUploadError("Please upload a PDF file only");
@@ -55,53 +57,17 @@ const JobSeekerSkillsStep = ({
       return;
     }
 
-    setIsUploading(true);
-    setUploadError(null);
-    setUploadProgress(0);
-
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(interval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 200);
-
     try {
-      // TODO: Replace with actual API call
-      // const formData = new FormData();
-      // formData.append("resume", file);
+      setIsUploading(true);
+      setUploadError(null);
 
-      // const response = await fetch("/api/upload-resume", {
-      //   method: "POST",
-      //   body: formData,
-      // });
+      await uploadResume(file);
 
-      // if (!response.ok) throw new Error("Upload failed");
+      updateFormData("resumeFile", file);
 
-      // const data = await response.json();
-      // updateFormData("resumeUrl", data.url);
-
-      // Simulate API delay
-      setTimeout(() => {
-        clearInterval(interval);
-        setUploadProgress(100);
-        updateFormData("resumeFile", file);
-
-        // Reset after 1.5 seconds
-        setTimeout(() => {
-          setIsUploading(false);
-          setUploadProgress(0);
-        }, 1500);
-      }, 1500);
-    } catch (error: any) {
-      clearInterval(interval);
+      setIsUploading(false);
+    } catch (error) {
       setUploadError("Upload failed. Please try again.");
-      console.log("error: ", error);
-
       setIsUploading(false);
     }
   };
@@ -276,10 +242,6 @@ const JobSeekerSkillsStep = ({
                   </div>
                   <div className="space-y-2">
                     <p className="font-medium">Uploading Resume...</p>
-                    <Progress value={uploadProgress} className="w-full" />
-                    <p className="text-sm text-muted-foreground">
-                      {uploadProgress}% uploaded
-                    </p>
                   </div>
                 </div>
               ) : (

@@ -44,7 +44,7 @@ export class SeekerController {
     return this.seekerService.updateProfile(dto, user);
   }
 
-  @Post('resume')
+  @Post('profile/resume')
   @UseInterceptors(FileInterceptor('resume'))
   uploadResume(
     @UploadedFile() file: Express.Multer.File,

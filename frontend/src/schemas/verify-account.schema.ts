@@ -1,9 +1,8 @@
 import { z } from "zod";
 
 export const verifyAccountSchema = z.object({
-    otp: z
-        .string()
-        .length(6, "Verification code must be 6 digits"),
+    email: z.string().email(),
+    otp: z.string().length(6, "OTP must be 6 digits"),
 });
 
 export type VerifyAccountFormValues = z.infer<

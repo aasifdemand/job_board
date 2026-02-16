@@ -1,6 +1,5 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -25,10 +24,18 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { useAuthStore } from "@/store/auth.store";
 
 const SeekerSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
+  };
 
   const mainNavItems = [
     { icon: Home, label: "Dashboard", href: "/seeker" },
@@ -58,7 +65,6 @@ const SeekerSidebar = () => {
     { icon: HelpCircle, label: "Help", href: "/seeker/help" },
   ];
 
-  // Check if current path matches the href or is a sub-route
   const isActive = (href: string) => {
     if (href === "/seeker") {
       return currentPath === href;
@@ -67,22 +73,17 @@ const SeekerSidebar = () => {
   };
 
   return (
-    <Sidebar className="w-64 shrink-0 border-r bg-card">
-      <SidebarContent className="h-full flex flex-col">
+    <Sidebar className="border-r">
+      <SidebarContent>
         {/* Logo */}
-        <div className="p-4 pb-4">
+        <div className="p-6">
           <SeekerLogo />
         </div>
 
-        <Separator className="mb-4" />
-
         {/* Main Navigation */}
-        <SidebarGroup className="px-4">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Navigation
-          </SidebarGroupLabel>
+        <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu>
               {mainNavItems.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -90,32 +91,20 @@ const SeekerSidebar = () => {
                     <SidebarMenuButton
                       asChild
                       className={cn(
-                        "group relative w-full justify-start px-3 py-2.5 rounded-lg transition-all duration-200",
-                        active
-                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                          : "hover:bg-accent hover:text-accent-foreground",
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
                       )}
                     >
-                      <a href={item.href}>
+                      <a href={item.href} className="flex items-center gap-3">
                         <item.icon
-                          className={cn(
-                            "mr-3 h-4 w-4",
-                            active
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground group-hover:text-accent-foreground",
-                          )}
+                          className={cn("h-5 w-5", active && "text-primary")}
                         />
-                        <span>{item.label}</span>
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
                         {item.badge && (
-                          <Badge
-                            variant={active ? "secondary" : "outline"}
-                            className={cn(
-                              "ml-auto text-xs",
-                              active
-                                ? "bg-background text-foreground"
-                                : "bg-primary/10 text-primary",
-                            )}
-                          >
+                          <Badge variant="secondary" className="ml-auto">
                             {item.badge}
                           </Badge>
                         )}
@@ -129,12 +118,10 @@ const SeekerSidebar = () => {
         </SidebarGroup>
 
         {/* Secondary Navigation */}
-        <SidebarGroup className="px-4 mt-2">
-          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Insights
-          </SidebarGroupLabel>
+        <SidebarGroup className="mt-4">
+          <SidebarGroupLabel>Insights</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu>
               {secondaryNavItems.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -142,32 +129,20 @@ const SeekerSidebar = () => {
                     <SidebarMenuButton
                       asChild
                       className={cn(
-                        "group w-full justify-start px-3 py-2.5 rounded-lg transition-colors",
-                        active
-                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                          : "hover:bg-accent hover:text-accent-foreground",
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
                       )}
                     >
-                      <a href={item.href}>
+                      <a href={item.href} className="flex items-center gap-3">
                         <item.icon
-                          className={cn(
-                            "mr-3 h-4 w-4",
-                            active
-                              ? "text-primary-foreground"
-                              : "text-muted-foreground group-hover:text-accent-foreground",
-                          )}
+                          className={cn("h-5 w-5", active && "text-primary")}
                         />
-                        <span>{item.label}</span>
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
                         {item.badge && (
-                          <Badge
-                            variant={active ? "secondary" : "outline"}
-                            className={cn(
-                              "ml-auto text-xs",
-                              active
-                                ? "bg-background text-foreground"
-                                : "bg-primary/10 text-primary border-primary/20",
-                            )}
-                          >
+                          <Badge variant="secondary" className="ml-auto">
                             {item.badge}
                           </Badge>
                         )}
@@ -181,50 +156,43 @@ const SeekerSidebar = () => {
         </SidebarGroup>
 
         {/* Bottom Navigation */}
-        <div className="mt-auto p-4 border-t">
-          <SidebarMenu className="space-y-1">
-            {bottomNavItems.map((item) => {
-              const active = isActive(item.href);
-              return (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      "group w-full justify-start px-3 py-2.5 rounded-lg transition-colors",
-                      active
-                        ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                        : "hover:bg-accent hover:text-accent-foreground",
-                    )}
-                  >
-                    <a href={item.href}>
-                      <item.icon
-                        className={cn(
-                          "mr-3 h-4 w-4",
-                          active
-                            ? "text-primary-foreground"
-                            : "text-muted-foreground group-hover:text-accent-foreground",
-                        )}
-                      />
-                      <span>{item.label}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              );
-            })}
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {bottomNavItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "relative",
+                        active &&
+                          "bg-primary/5 font-medium before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-primary before:rounded-r",
+                      )}
+                    >
+                      <a href={item.href} className="flex items-center gap-3">
+                        <item.icon
+                          className={cn("h-5 w-5", active && "text-primary")}
+                        />
+                        <span className={cn(active && "text-primary")}>
+                          {item.label}
+                        </span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
 
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                className="group w-full justify-start px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
-              >
-                <a href="/logout">
-                  <LogOut className="mr-3 h-4 w-4" />
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleLogout}>
+                  <LogOut className="h-5 w-5" />
                   <span>Logout</span>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );

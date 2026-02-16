@@ -16,8 +16,16 @@ import JobSeekerSkillsStep from "@/components/onboarding/skills-step";
 import RecruiterReviewStep from "@/components/onboarding/recruiter-details";
 import JobSeekerReviewStep from "@/components/onboarding/jobseeker-review";
 import RecruiterDetailsStep from "@/components/onboarding/recruiter-details";
-
+import { useSeekerStore } from "@/store/seeker.store";
+import { useAuthStore } from "@/store/auth.store";
+import { toast } from "sonner";
+import { useRecruiterStore } from "@/store/recruiter.store";
 const OnboardingPage = () => {
+  const createCompany = useRecruiterStore((s) => s.createCompany);
+  const createSeekerProfile = useSeekerStore((s) => s.createProfile);
+  const uploadResume = useSeekerStore((s) => s.uploadResume);
+  const { fetchMe } = useAuthStore();
+
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState<"jobSeeker" | "recruiter" | null>(
@@ -58,30 +66,47 @@ const OnboardingPage = () => {
 
   const handleSubmit = async () => {
     try {
-      const payload =
-        userType === "jobSeeker"
-          ? {
-              headline: formData.headline,
-              summary: formData.summary,
-              location: formData.location,
-              experienceLevel: formData.experienceLevel,
-              skills: formData.skills,
-              resumeUrl: formData.resumeFile,
-            }
-          : {
-              name: formData.companyName,
-              website: formData.companyWebsite,
-              location: formData.location,
-              description: formData.companyDescription,
-            };
+      if (!userType) return;
 
-      console.log("Submitting:", { userType, ...payload });
-      // TODO: API call
-      // await api.post(`/onboarding/${userType}`, payload);
+      if (userType === "jobSeeker") {
+        await createSeekerProfile({
+          headline: formData.headline,
+          summary: formData.summary,
+          location: formData.location,
+          experienceLevel: formData.experienceLevel,
+          skills: formData.skills,
+        });
 
-      navigate("/dashboard");
+        if (formData.resumeFile) {
+          await uploadResume(formData.resumeFile);
+        }
+
+        await fetchMe();
+
+        toast.success("Profile completed successfully 🎉");
+
+        navigate("/seeker");
+      }
+
+      if (userType === "recruiter") {
+        // ✅ CREATE COMPANY
+        await createCompany({
+          name: formData.companyName,
+          website: formData.companyWebsite,
+          location: formData.location,
+          description: formData.companyDescription,
+        });
+
+        // ✅ Refresh user (gets isOnboarded = true)
+        await fetchMe();
+
+        toast.success("Company profile completed 🎉");
+
+        navigate("/recruiter");
+      }
     } catch (error) {
-      console.error("Submission failed:", error);
+      console.error(error);
+      toast.error("Failed to complete onboarding");
     }
   };
 

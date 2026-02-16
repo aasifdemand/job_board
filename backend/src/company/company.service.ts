@@ -23,10 +23,6 @@ export class CompanyService {
     ) { }
 
     async create(dto: CreateCompanyDto, authUser: JwtUser) {
-        if (authUser.role !== UserRole.RECRUITER) {
-            throw new ForbiddenException('Only recruiters can create companies');
-        }
-
         const user = await this.userRepo.findOne({
             where: { id: authUser.userId },
             relations: ['company'],
@@ -40,13 +36,24 @@ export class CompanyService {
             throw new ForbiddenException('Company already exists');
         }
 
+        // ✅ Update role safely
+        user.role = UserRole.RECRUITER;
+
         const company = this.companyRepo.create({
             ...dto,
             user,
         });
 
-        return this.companyRepo.save(company);
+        await this.companyRepo.save(company);
+
+        // ✅ Mark onboarding complete
+        user.isOnboarded = true;
+
+        await this.userRepo.save(user);
+
+        return company;
     }
+
 
     async findMyCompany(authUser: JwtUser) {
         const user = await this.userRepo.findOne({

@@ -2,8 +2,10 @@ import {
     Body,
     Controller,
     Get,
+    Patch,
     Post,
     Req,
+    Res,
     UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -12,6 +14,8 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { UserRole } from 'src/entities/user.entity';
+import { type JwtUser } from 'src/types/user.type';
 
 @Controller('auth')
 export class AuthController {
@@ -27,10 +31,14 @@ export class AuthController {
         return this.authService.login(dto);
     }
 
-    @Get('verify')
-    verify(@Req() req) {
-        return this.authService.verifyAccount(req.query.token);
+    @Post('verify')
+    verify(
+        @Body('email') email: string,
+        @Body('otp') otp: string,
+    ) {
+        return this.authService.verifyAccount(email, otp);
     }
+
 
     @Get('google')
     @UseGuards(AuthGuard('google'))
@@ -38,8 +46,11 @@ export class AuthController {
 
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
-    googleCallback(@Req() req) {
-        return this.authService.googleLogin(req.user);
+    async googleCallback(@Req() req, @Res() res) {
+        const data = await this.authService.googleLogin(req.user);
+        return res.redirect(
+            `${process.env.FRONTEND_URL}/google/callback?token=${data.accessToken}`
+        );
     }
 
     @Post('forgot-password')
@@ -55,9 +66,21 @@ export class AuthController {
         return this.authService.resetPassword(token, password);
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('me')
-    me(@CurrentUser() user) {
-        return user;
+    @UseGuards(JwtAuthGuard)
+    getMe(@CurrentUser() user: JwtUser) {
+        return this.authService.findOne(user.userId);
     }
+
+
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('select-role')
+    selectRole(
+        @Body('role') role: UserRole,
+        @CurrentUser() user: JwtUser,
+    ) {
+        return this.authService.selectRole(role, user);
+    }
+
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,24 +13,60 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "@/schemas/login.schema";
 
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Google } from "../shared/google";
+import { useAuthStore } from "@/store/auth.store";
+import { toast } from "sonner";
 
 export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
   const [showPassword, setShowPassword] = useState(false);
 
+  const { state } = useLocation();
+
+  const email = state?.email;
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: email || "",
+      password: "",
+    },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login data:", data);
+  const { login, loading, user, googleLogin } = useAuthStore();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (user.role === "recruiter") {
+      navigate("/recruiter", { replace: true });
+    } else {
+      navigate("/seeker", { replace: true });
+    }
+  }, [user, navigate]);
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      await login({
+        email: data.email,
+        password: data.password,
+      });
+
+      toast.success("Welcome back👋");
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message?.message ||
+          err?.response?.data?.message ||
+          "Failed to create account",
+      );
+    }
   };
 
   return (
@@ -92,8 +129,9 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
           {/* Actions */}
           <div className="space-y-2">
             <div className="space-y-3">
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                Sign in
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                login
               </Button>
 
               {/* Separator */}
@@ -108,7 +146,13 @@ export function LoginForm({ ...props }: React.ComponentProps<typeof Card>) {
                 </div>
               </div>
 
-              <Button type="button" variant="outline" className="w-full">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={googleLogin}
+                disabled={loading}
+              >
                 <Google />
                 Sign in with Google
               </Button>

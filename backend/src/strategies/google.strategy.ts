@@ -14,6 +14,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     }
 
     async validate(_: string, __: string, profile: Profile) {
+        console.log("profile: ", profile);
+
         return {
             googleId: profile.id,
             email: profile.emails?.[0].value,
